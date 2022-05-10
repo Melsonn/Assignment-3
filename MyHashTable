@@ -1,0 +1,69 @@
+package com.company;
+
+public class MyHashTable <K, V>{
+    private class HashNode<K, V> {
+        private K key;
+        private V val;
+        private HashNode<K, V> next;
+        public HashNode(K key, V val) {
+            this.key = key;
+            this.val = val;
+        }
+
+        @Override
+        public String toString() {
+            return "{" + key + " " + val + '}';
+        }
+    }
+    private HashNode<K, V>[] chainArray;
+    private int M = 11;
+    private int size;
+    public MyHashTable() {
+        chainArray = new HashNode[M];
+        size = 0;
+    }
+    public MyHashTable(int M) {
+        size = 0;
+        this.M = M;
+        chainArray = new HashNode[M];
+    }
+    private int hash(K key) {
+        return (int) key % M;
+    }
+    public void put(K key, V val) {
+        if (chainArray[hash(key)].key == null) {
+            chainArray[hash(key)] = new HashNode(key, val);
+            return;
+        }
+        HashNode<K, V> temp = chainArray[hash(key)];
+        chainArray[hash(key)] = new HashNode(key, val);
+        chainArray[hash(key)].next = temp;
+    }
+    public V get(K key) {
+        int n = hash(key);
+        return chainArray[n].val;
+    }
+    public boolean contains (V val) {
+        for(int i = 0; i < size - 1; i++){
+            if(val.equals(chainArray[i]))
+                return true;
+        }
+        return false;
+    }
+    public V remove(K key) {
+        int n = hash(key);
+        HashNode<K, V> temp = chainArray[n];
+        chainArray[n] = chainArray[n].next;
+        return temp.val;
+    }
+    public K getKey(V val) {
+        for (int i = 0; i < M; i ++) {
+            HashNode<K, V> temp = chainArray[i];
+            do{
+                if (temp.val == val) return temp.key;
+                temp = temp.next;
+            }while (temp.key != null);
+        }
+        return null;
+    }
+}
